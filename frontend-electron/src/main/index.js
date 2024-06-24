@@ -34,6 +34,12 @@ function createWindow() {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
 }
+//Dependencias
+try {
+  require('electron-reloader')(module)
+} catch (_) {
+  /* empty */
+}
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
