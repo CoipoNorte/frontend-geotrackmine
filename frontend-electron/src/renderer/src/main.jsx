@@ -3,14 +3,16 @@ import './assets/main.scss'
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
-import { HashRouter, Route, Routes } from 'react-router-dom'
+import { AlarmaLista } from './components/AlarmaLista'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <HashRouter>
+    <BrowserRouter>
       <Routes>
-        <Route path="/" element={<App></App>} />
+        <Route path="/" element={<App />} />
+        <Route path="/alarma-lista" element={<AlarmaLista />} />
       </Routes>
-    </HashRouter>
+    </BrowserRouter>
   </React.StrictMode>
 )
