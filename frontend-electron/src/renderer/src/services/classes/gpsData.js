@@ -1,4 +1,4 @@
-export class Alarma{
+export class GPSData {
 
   constructor(){
 

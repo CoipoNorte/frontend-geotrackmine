@@ -31,7 +31,9 @@ export const Login = () => {
             type="password"
             placeholder="Inserte texto..."
           ></input>
-          <button id="authUser" type="button" onClick={authUser}>Ingresar</button>
+          <button id="authUser" type="button" onClick={authUser}>
+            Ingresar
+          </button>
         </div>
       </div>
     </div>
