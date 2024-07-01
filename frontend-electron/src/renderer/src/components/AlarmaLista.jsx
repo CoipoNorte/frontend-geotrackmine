@@ -1,36 +1,51 @@
-import logo from '../assets/13998279154_3cd6083b40_o.jpg'
-import * as ReactDOM from 'react-dom/client'
-import React from 'react'
+import React, { useEffect } from 'react'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import * as dataTest from '../services/dataTest.json'
+import { Alarma } from '../services/classes/alarma'
+import { faTriangleExclamation, faCircle, faCircleInfo } from '@fortawesome/free-solid-svg-icons'
 
-let stringHTML
-const test = () => {
-  const rowsAlarmaElement = ReactDOM.createRoot(document.querySelector('.rows'))
-  stringHTML = '<>'
-  for (let i = 0; i < 6; i++) {
-    stringHTML += `
-              <tr className="rowAlarma">
-                <td>${i}</td><td>${i}</td><td>${i}</td><td>${i}</td>
-              </tr>
-    `
-  }
-  stringHTML += '</>'
-  //rowsAlarmaElement.render({ __html: stringHTML })
-}
-
-const emptyList = () => {
-  const rowsAlarmaElement = ReactDOM.createRoot(document.querySelector('.rows'))
-  rowsAlarmaElement.render()
-}
-
-let rows = ({ data }) => {
-  return <></>
+const ModalLista = ({ data }) => {
+  return (
+    <div className="modalPopup">
+      <span className="material-symbols-outlined">done</span>
+      <h2>Thanks</h2>
+      <p>Your response has been submitted!</p>
+      <button type="button">OK</button>
+    </div>
+  )
 }
 
 export const AlarmaLista = () => {
-  const [data, setData] = React.useState(6)
+  const LIMIT = 20
+  const [isLoading, setLoading] = React.useState(true)
+  const [index, setIndex] = React.useState(0)
+  const [dataAlarma, setDataAlarma] = React.useState([])
+  const alarmas = []
+  const changeIndex = (idx) => {
+    return
+  }
+  const jsonToData = async () => {
+    for (let x of dataTest.data) {
+      alarmas.push(new Alarma(x.alertID, x.alertType, x.message, x.timestamp, x.dispatcherID))
+    }
+    console.log(parseInt(alarmas.length / 20) + 1)
+    setIndex(parseInt(alarmas.length / LIMIT) + 1)
+    if (alarmas.length < LIMIT) {
+      setDataAlarma(alarmas)
+    } else {
+      setDataAlarma(alarmas.slice(0, 19))
+    }
+  }
+  useEffect(() => {
+    setTimeout(() => {
+      jsonToData()
+      setLoading(false)
+    }, 10000)
+  }, [])
+  if (isLoading) console.log('loading!')
   return (
     <>
-      <div className="bgList"></div>
+      <div className="bgList grayScale"></div>
       <div className="containerList">
         <div className="block">
           <div className="kpi">
@@ -42,22 +57,35 @@ export const AlarmaLista = () => {
           <table className="tableAlarma">
             <thead className="headers">
               <tr className="rowHeader">
-                <th className="header">adssad</th>
-                <th className="header">asdasd</th>
-                <th className="header">asdsad</th>
-                <th className="header">asdasdsa</th>
+                <th className="header">ID Alarma</th>
+                <th className="header">Alerta</th>
+                <th className="header">Periodo</th>
+                <th className="header">Mensaje</th>
+                <th className="header">Acción</th>
               </tr>
             </thead>
             <tbody className="rows">
               {(() => {
                 const arr = []
-                for (let i = 0; i < data; i++) {
+                for (let data of dataAlarma) {
                   arr.push(
-                    <tr key={"row"+i} className="rowAlarma">
-                      <td key={"col1-" + i}>{i}</td>
-                      <td key={"col2-" + i}>{i}</td>
-                      <td key={"col3-" + i}>{i}</td>
-                      <td key={"col4-" + i}>{i}</td>
+                    <tr className="rowAlarma">
+                      <td>{data.alertId}</td>
+                      <td>
+                        <FontAwesomeIcon
+                          icon={
+                            data.alertType === 'Test Alert 1' ? faTriangleExclamation : faCircle
+                          }
+                          color={data.alertType === 'Test Alert 1' ? 'red' : 'green'}
+                        />
+                      </td>
+                      <td>{data.timestamp}</td>
+                      <td>{data.dispatcherID}</td>
+                      <td>
+                        <button className="buttonAction">
+                          <FontAwesomeIcon className="iconAction" icon={faCircleInfo} />
+                        </button>
+                      </td>
                     </tr>
                   )
                 }
@@ -66,7 +94,19 @@ export const AlarmaLista = () => {
             </tbody>
             <tfoot className="foot">
               <tr>
-                <button type="button" onClick={() => setData(data + 1)}>asldasd</button>
+                <td colSpan="5">
+                  {(() => {
+                    const array = []
+                    for (let idx = 1; idx <= index; idx++) {
+                      array.push(
+                        <button className="indexes" key={'idx_' + idx}>
+                          {idx}
+                        </button>
+                      )
+                    }
+                    return array
+                  })()}
+                </td>
               </tr>
             </tfoot>
           </table>
