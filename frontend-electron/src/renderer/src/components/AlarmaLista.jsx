@@ -8,8 +8,8 @@ const ModalLista = ({ data }) => {
   return (
     <div className="modalPopup">
       <span className="material-symbols-outlined">done</span>
-      <h2>Thanks</h2>
-      <p>Your response has been submitted!</p>
+      <label>Aqui va el texto :D</label>
+      <p>Inserte más texto</p>
       <button type="button">OK</button>
     </div>
   )
@@ -49,10 +49,18 @@ export const AlarmaLista = () => {
       <div className="containerList">
         <div className="block">
           <div className="kpi">
-            <div className="card"></div>
-            <div className="card"></div>
-            <div className="card"></div>
-            <div className="card"></div>
+            <div className="card">
+              <p>Total de Alarmas</p>
+              <strong>{dataAlarma.length}</strong>
+            </div>
+            <div className="card">
+              <p>Total de Alarmas</p>
+              <strong>{dataAlarma.length}</strong>
+            </div>
+            <div className="card">
+              <p>Total de Alarmas</p>
+              <strong>{dataAlarma.length}</strong>
+            </div>
           </div>
           <table className="tableAlarma">
             <thead className="headers">
