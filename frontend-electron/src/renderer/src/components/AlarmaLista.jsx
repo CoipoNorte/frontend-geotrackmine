@@ -3,14 +3,57 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import * as dataTest from '../services/dataTest.json'
 import { Alarma } from '../services/classes/alarma'
 import { faTriangleExclamation, faCircle, faCircleInfo } from '@fortawesome/free-solid-svg-icons'
+import logo from "../assets/svg/tiny-Codelco_logo.svg"
 
-const ModalLista = ({ data }) => {
+const DialogAlerta = ({ setDialogUseState }) => {
+  return (
+    <div className="dialogPopup">
+      <img srcSet={logo} className="material-symbols-outlined"></img>
+      <div className="content">
+        <label>Aqui va el texto :D</label>
+        <p>Inserte más texto</p>
+        <label>Aqui va el texto :D</label>
+        <p>Inserte más texto</p>
+        <label>Aqui va el texto :D</label>
+        <p>Inserte más texto</p>
+        <label>Aqui va el texto :D</label>
+        <p>Inserte más texto</p>
+        <button type="button" onClick={() => setDialogUseState(false)}>
+          OK
+        </button>
+      </div>
+    </div>
+  )
+}
+
+const AlarmaGoogleMap = ({ setGoogleMapUseState }) => {
+  return (
+    <div className="mapModal">
+      <img srcSet={logo} className="material-symbols-outlined"></img>
+      <button type="button" onClick={() => setGoogleMapUseState(false)}>
+        OK
+      </button>
+    </div>
+  )
+}
+
+const ModalLista = ({ setModalUseState }) => {
   return (
     <div className="modalPopup">
-      <span className="material-symbols-outlined">done</span>
-      <label>Aqui va el texto :D</label>
-      <p>Inserte más texto</p>
-      <button type="button">OK</button>
+      <img srcSet={logo} className="material-symbols-outlined"></img>
+      <div className="content">
+        <label>Aqui va el texto :D</label>
+        <p>Inserte más texto</p>
+        <label>Aqui va el texto :D</label>
+        <p>Inserte más texto</p>
+        <label>Aqui va el texto :D</label>
+        <p>Inserte más texto</p>
+        <label>Aqui va el texto :D</label>
+        <p>Inserte más texto</p>
+        <button type="button" onClick={() => setModalUseState(false)}>
+          OK
+        </button>
+      </div>
     </div>
   )
 }
@@ -20,15 +63,18 @@ export const AlarmaLista = () => {
   const [isLoading, setLoading] = React.useState(true)
   const [index, setIndex] = React.useState(0)
   const [dataAlarma, setDataAlarma] = React.useState([])
+  const [modalActivate, setActivateModal] = React.useState(false)
+  const [dialogActivate, setDialogActivate] = React.useState(false)
+  const [googleMapActivate, setGoogleMapActivate] = React.useState(false)
   const alarmas = []
   const changeIndex = (idx) => {
+    setDataAlarma(alarmas.slice(0 + 20 * (idx - 1)), 20 * idx)
     return
   }
   const jsonToData = async () => {
     for (let x of dataTest.data) {
       alarmas.push(new Alarma(x.alertID, x.alertType, x.message, x.timestamp, x.dispatcherID))
     }
-    console.log(parseInt(alarmas.length / 20) + 1)
     setIndex(parseInt(alarmas.length / LIMIT) + 1)
     if (alarmas.length < LIMIT) {
       setDataAlarma(alarmas)
@@ -37,16 +83,17 @@ export const AlarmaLista = () => {
     }
   }
   useEffect(() => {
-    setTimeout(() => {
-      jsonToData()
-      setLoading(false)
-    }, 10000)
+    jsonToData()
+    setLoading(false)
   }, [])
   if (isLoading) console.log('loading!')
   return (
     <>
       <div className="bgList grayScale"></div>
-      <div className="containerList">
+      {modalActivate && <ModalLista setModalUseState={setActivateModal} />}
+      {dialogActivate && <DialogAlerta setDialogUseState={setDialogActivate} />}
+      {googleMapActivate && <AlarmaGoogleMap setGoogleMapUseState={setGoogleMapActivate} />}
+      <div className={modalActivate ? 'containerList blur' : 'containerList'}>
         <div className="block">
           <div className="kpi">
             <div className="card">
@@ -91,7 +138,13 @@ export const AlarmaLista = () => {
                       <td>{data.dispatcherID}</td>
                       <td>
                         <button className="buttonAction">
-                          <FontAwesomeIcon className="iconAction" icon={faCircleInfo} />
+                          <FontAwesomeIcon
+                            className="iconAction"
+                            icon={faCircleInfo}
+                            onClick={() => {
+                              setActivateModal(true)
+                            }}
+                          />
                         </button>
                       </td>
                     </tr>
