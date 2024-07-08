@@ -1,11 +1,13 @@
+/* eslint-disable react/prop-types */
 import React, { useEffect } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import * as dataTest from '../services/dataTest.json'
 import { Alarma } from '../services/classes/alarma'
 import { faTriangleExclamation, faCircle, faCircleInfo } from '@fortawesome/free-solid-svg-icons'
-import logo from "../assets/svg/tiny-Codelco_logo.svg"
+import logo from '../assets/svg/tiny-Codelco_logo.svg'
+import axios from 'axios'
 
-const DialogAlerta = ({ setDialogUseState }) => {
+const DialogAlerta = ({ setDialogUseState }, data) => {
   return (
     <div className="dialogPopup">
       <img srcSet={logo} className="material-symbols-outlined"></img>
@@ -26,7 +28,7 @@ const DialogAlerta = ({ setDialogUseState }) => {
   )
 }
 
-const AlarmaGoogleMap = ({ setGoogleMapUseState }) => {
+const AlarmaGoogleMap = ({ setGoogleMapUseState }, data) => {
   return (
     <div className="mapModal">
       <img srcSet={logo} className="material-symbols-outlined"></img>
@@ -37,23 +39,62 @@ const AlarmaGoogleMap = ({ setGoogleMapUseState }) => {
   )
 }
 
-const ModalLista = ({ setModalUseState }) => {
+const ModalLista = ({ setModalUseState, data }) => {
+  console.log(data)
   return (
     <div className="modalPopup">
       <img srcSet={logo} className="material-symbols-outlined"></img>
       <div className="content">
-        <label>Aqui va el texto :D</label>
-        <p>Inserte más texto</p>
-        <label>Aqui va el texto :D</label>
-        <p>Inserte más texto</p>
-        <label>Aqui va el texto :D</label>
-        <p>Inserte más texto</p>
-        <label>Aqui va el texto :D</label>
-        <p>Inserte más texto</p>
-        <button type="button" onClick={() => setModalUseState(false)}>
-          OK
-        </button>
+        <div className="blockLine">
+          <div>
+            <label>Fecha</label>
+            <label>{data.fecha}</label>
+          </div>
+          <div>
+            <label>Estado</label>
+            <label>{data.estado}</label>
+          </div>
+          <div>
+            <label>Localización</label>
+            <label>{data.localizacion}</label>
+          </div>
+          <div>
+            <label>Este</label>
+            <label>{data.este}</label>
+          </div>
+          <div>
+            <label>Norte</label>
+            <label>{data.norte}</label>
+          </div>
+          <div>
+            <label>Cota</label>
+            <label>{data.cota}</label>
+          </div>
+          <div>
+            <label>Grupo</label>
+            <label>{data.grupo}</label>
+          </div>
+          <div>
+            <label>Flota</label>
+            <label>{data.flota}</label>
+          </div>
+          <div>
+            <label>Caex</label>
+            <label>{data.caex}</label>
+          </div>
+          <div>
+            <label>Razón</label>
+            <label>{data.razon}</label>
+          </div>
+          <div>
+            <label>Comentario</label>
+            <label>{data.comment === '' ? 'No hay Comentario' : data.comment}</label>
+          </div>
+        </div>
       </div>
+      <button type="button" onClick={() => setModalUseState(false)}>
+        OK
+      </button>
     </div>
   )
 }
@@ -66,31 +107,41 @@ export const AlarmaLista = () => {
   const [modalActivate, setActivateModal] = React.useState(false)
   const [dialogActivate, setDialogActivate] = React.useState(false)
   const [googleMapActivate, setGoogleMapActivate] = React.useState(false)
-  const alarmas = []
+  const [dataToShow, setDataToShow] = React.useState({})
+  const [totalData, setTotalData] = React.useState({})
+
   const changeIndex = (idx) => {
-    setDataAlarma(alarmas.slice(0 + 20 * (idx - 1)), 20 * idx)
+    const start = 20 * (idx - 1)
+    const end = 20 * idx
+    setDataAlarma(totalData.slice(start, end))
     return
   }
-  const jsonToData = async () => {
-    for (let x of dataTest.data) {
-      alarmas.push(new Alarma(x.alertID, x.alertType, x.message, x.timestamp, x.dispatcherID))
+  const fetchData = async () => {
+    try {
+      const response = await axios.get('http://localhost:3005/api/alerts/getAlerts')
+      setTotalData([...response.data.data])
+    } catch (error) {
+      console.error('Error obteniendo datos:', error)
     }
-    setIndex(parseInt(alarmas.length / LIMIT) + 1)
-    if (alarmas.length < LIMIT) {
-      setDataAlarma(alarmas)
+  }
+  const jsonToData = async () => {
+    setIndex(parseInt(totalData.length / LIMIT) + 1)
+    if (totalData.length < LIMIT) {
+      setDataAlarma()
     } else {
-      setDataAlarma(alarmas.slice(0, 19))
+      setDataAlarma(totalData.slice(0, 19))
     }
   }
   useEffect(() => {
+    fetchData()
     jsonToData()
     setLoading(false)
-  }, [])
+  }, [totalData.length > 0])
   if (isLoading) console.log('loading!')
   return (
     <>
       <div className="bgList grayScale"></div>
-      {modalActivate && <ModalLista setModalUseState={setActivateModal} />}
+      {modalActivate && <ModalLista setModalUseState={setActivateModal} data={dataToShow} />}
       {dialogActivate && <DialogAlerta setDialogUseState={setDialogActivate} />}
       {googleMapActivate && <AlarmaGoogleMap setGoogleMapUseState={setGoogleMapActivate} />}
       <div className={modalActivate ? 'containerList blur' : 'containerList'}>
@@ -98,24 +149,26 @@ export const AlarmaLista = () => {
           <div className="kpi">
             <div className="card">
               <p>Total de Alarmas</p>
-              <strong>{dataAlarma.length}</strong>
+              <strong>{totalData.length}</strong>
             </div>
             <div className="card">
-              <p>Total de Alarmas</p>
-              <strong>{dataAlarma.length}</strong>
+              <p>Alarmas en Reserva</p>
+              <strong>{dataAlarma.filter((alarma) => alarma.estado === 'Reserva').length}</strong>
             </div>
             <div className="card">
-              <p>Total de Alarmas</p>
-              <strong>{dataAlarma.length}</strong>
+              <p>Alarmas en Demora</p>
+              <strong>{dataAlarma.filter((alarma) => alarma.estado === 'Demora').length}</strong>
             </div>
           </div>
           <table className="tableAlarma">
             <thead className="headers">
               <tr className="rowHeader">
-                <th className="header">ID Alarma</th>
-                <th className="header">Alerta</th>
+                <th className="header">Camión</th>
+                <th className="header">Grupo</th>
+                <th className="header">Localizacion</th>
+                <th className="header">Estado</th>
+                <th className="header">Razon</th>
                 <th className="header">Periodo</th>
-                <th className="header">Mensaje</th>
                 <th className="header">Acción</th>
               </tr>
             </thead>
@@ -124,24 +177,25 @@ export const AlarmaLista = () => {
                 const arr = []
                 for (let data of dataAlarma) {
                   arr.push(
-                    <tr className="rowAlarma">
-                      <td>{data.alertId}</td>
+                    <tr className="rowAlarma" key={data.id}>
+                      <td>{data.caex}</td>
+                      <td>{data.grupo}</td>
+                      <td>{data.localizacion}</td>
                       <td>
                         <FontAwesomeIcon
-                          icon={
-                            data.alertType === 'Test Alert 1' ? faTriangleExclamation : faCircle
-                          }
-                          color={data.alertType === 'Test Alert 1' ? 'red' : 'green'}
+                          icon={data.estado === 'Demora' ? faTriangleExclamation : faCircle}
+                          color={data.estado === 'Demora' ? 'red' : 'orange'}
                         />
                       </td>
-                      <td>{data.timestamp}</td>
-                      <td>{data.dispatcherID}</td>
+                      <td>{data.razon}</td>
+                      <td>{data.fecha}</td>
                       <td>
                         <button className="buttonAction">
                           <FontAwesomeIcon
                             className="iconAction"
                             icon={faCircleInfo}
                             onClick={() => {
+                              setDataToShow(data)
                               setActivateModal(true)
                             }}
                           />
@@ -155,12 +209,16 @@ export const AlarmaLista = () => {
             </tbody>
             <tfoot className="foot">
               <tr>
-                <td colSpan="5">
+                <td colSpan="7">
                   {(() => {
                     const array = []
                     for (let idx = 1; idx <= index; idx++) {
                       array.push(
-                        <button className="indexes" key={'idx_' + idx}>
+                        <button
+                          onClick={() => changeIndex(idx)}
+                          className="indexes"
+                          key={'idx_' + idx}
+                        >
                           {idx}
                         </button>
                       )
