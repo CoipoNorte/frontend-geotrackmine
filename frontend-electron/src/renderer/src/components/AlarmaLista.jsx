@@ -1,11 +1,14 @@
 /* eslint-disable react/prop-types */
 import React, { useEffect } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import * as dataTest from '../services/dataTest.json'
-import { Alarma } from '../services/classes/alarma'
 import { faTriangleExclamation, faCircle, faCircleInfo } from '@fortawesome/free-solid-svg-icons'
 import logo from '../assets/svg/tiny-Codelco_logo.svg'
 import axios from 'axios'
+import cat793iv from '../assets/Image/cat793iv.jpg'
+import cat797f from '../assets/Image/cat797f.png'
+import cat798ac from '../assets/Image/cat798ac.jpg'
+import kom930e from '../assets/Image/kom930e.png'
+
 
 const DialogAlerta = ({ setDialogUseState }, data) => {
   return (
@@ -39,8 +42,31 @@ const AlarmaGoogleMap = ({ setGoogleMapUseState }, data) => {
   )
 }
 
+const flotas = [
+  {
+    flota: 'CAT 793F - ICV',
+    src: cat793iv
+  },
+  {
+    flota: 'CAT 797F',
+    src: cat797f
+  },
+  {
+    flota: 'CAT 797F_MAKEUP',
+    src: cat797f
+  },
+  {
+    flota: 'CAT 798AC',
+    src: cat798ac
+  },
+  {
+    flota: 'KOM 930E',
+    src: kom930e
+  }
+]
+
 const ModalLista = ({ setModalUseState, data }) => {
-  console.log(data)
+  const [tempData, setTempData] = React.useState("")
   return (
     <div className="modalPopup">
       <img srcSet={logo} className="material-symbols-outlined"></img>
@@ -52,7 +78,7 @@ const ModalLista = ({ setModalUseState, data }) => {
           </div>
           <div>
             <label>Estado</label>
-            <label>{data.estado}</label>
+            <label>{tempData ? tempData : data.estado}</label>
           </div>
           <div>
             <label>Localización</label>
@@ -71,6 +97,19 @@ const ModalLista = ({ setModalUseState, data }) => {
             <label>{data.cota}</label>
           </div>
           <div>
+            <label>Razón</label>
+            <label>{data.razon}</label>
+          </div>
+          <div>
+            <label>Comentario</label>
+            <label>{data.comment === '' ? 'No hay Comentario' : data.comment}</label>
+          </div>
+        </div>
+      </div>
+      <div className="containerModelo">
+        <img src={flotas.filter((obj) => obj.flota === data.flota).at(0).src}></img>
+        <div>
+          <div>
             <label>Grupo</label>
             <label>{data.grupo}</label>
           </div>
@@ -82,16 +121,11 @@ const ModalLista = ({ setModalUseState, data }) => {
             <label>Caex</label>
             <label>{data.caex}</label>
           </div>
-          <div>
-            <label>Razón</label>
-            <label>{data.razon}</label>
-          </div>
-          <div>
-            <label>Comentario</label>
-            <label>{data.comment === '' ? 'No hay Comentario' : data.comment}</label>
-          </div>
         </div>
       </div>
+      <button type="button" className="changeEstado" onClick={() =>setTempData("Resuelto")}>
+        Resuelto
+      </button>
       <button type="button" onClick={() => setModalUseState(false)}>
         OK
       </button>

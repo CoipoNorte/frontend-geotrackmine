@@ -7,7 +7,7 @@ export const Login = () => {
     const inputPassword = document.querySelector('#password')
     if (data.user === inputEmail.value) {
       if (data.pass === inputPassword.value) {
-        return window.location.replace('/alarma-lista')
+        return (window.location.href = location.href + '#/alarma-lista')
       }
       return 'Contraseña incorrecta'
     }
