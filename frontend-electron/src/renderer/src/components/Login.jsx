@@ -1,13 +1,17 @@
+import { Navigate, useNavigate } from 'react-router-dom'
 import logo from '../assets/svg/tiny-Codelco_logo.svg'
 import * as data from '../services/userDev.json'
 
 export const Login = () => {
+  const navigate = useNavigate()
+
   const authUser = () => {
     const inputEmail = document.querySelector('#email')
     const inputPassword = document.querySelector('#password')
     if (data.user === inputEmail.value) {
       if (data.pass === inputPassword.value) {
-        return (window.location.href = location.href + '#/alarma-lista')
+        navigate('alarma-lista')
+        //return (window.location.href = location.href + '#/alarma-lista')
       }
       return 'Contraseña incorrecta'
     }
