@@ -9,128 +9,27 @@ $clr-white: #fff;
 $clr-light-gray: #333;
 $clr-green: #33d692;
 
-.dialogPopup {
-  width: 200px;
-  height: auto-fit;
-  background-color: $clr-white;
-  color: $clr-light-gray;
-  border-radius: 8px;
-  text-align: center;
-  padding: 0 20px 20px;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%,-50%);
-  z-index: 5;
-  .material-symbols-outlined {
-    height: 4vh;
-    width: 4vw;
-    padding: 5px;
-    margin-top: -20%;
-    margin-right: 0;
-    border: 2px solid black;
-    border-radius : 3rem;
-    background-color: $clr-bluish-2;
-    color:$clr-white;
-    box-shadow: 0 10px 3px rgba(0,0,0,0.2);
-  }
-
-  button {
-    width: 100%;
-    margin-top: 30px;
-    padding: 5px 0;
-    background: $clr-green;
-    color: $clr-white;
-    border: 0;
-    outline: none;
-    border-radius: 8px;
-    cursor: pointer;
-    box-shadow: 0 5px 3px rgba(0, 0, 0, 0.2);
-  }
-}
-
-.mapModal {
-  width: 80vw;
-  height: autofit;
-  padding: 10px;
-  background-color: $clr-white;
-  border-radius: 8px;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%,-50%);
-  z-index: 2;
-
-  .material-symbols-outlined {
-    height: 4vh;
-    width: 4vw;
-    padding: 5px;
-    margin-top: -20%;
-    margin-right: 0;
-    border: 2px solid black;
-    border-radius : 3rem;
-    background-color: $clr-bluish-2;
-    color:$clr-white;
-    box-shadow: 0 10px 3px rgba(0,0,0,0.2);
-  }
-  button {
-    width: 80%;
-    margin-top: 30px;
-    padding: 5px 0;
-    background: $clr-green;
-    color: $clr-white;
-    border: 0;
-    outline: none;
-    border-radius: 8px;
-    cursor: pointer;
-    box-shadow: 0 5px 3px rgba(0, 0, 0, 0.2);
-  }
-}
-
 .modalPopup {
   width: 80vw;
-  height: 80vh;
+  height: 90vh;
   background-color: $clr-white;
   color: $clr-light-gray;
   border-radius: 8px;
-  text-align: center;
-  padding: 0 20px 20px;
+  padding: 0 0;
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%,-50%);
   z-index: 2;
-  .content {
-    text-align: left;
-    max-height: 70vh;
-    .blockLine {
-      display: flex;
-      justify-content: start;
-      flex-flow: row wrap;
-      div {
-        display: flex;
-        flex-direction: column;
-        margin: 8px;
-        label {
-          margin-top: 5px;
-          margin-bottom: 5px;
-          border: 1.5px solid black;
-          border-radius: 6px;
-          padding: 4px;
-        }
-        label:first-of-type{
-          font-weight: bold;
-          font-weight: bold;
-        }
-      }
-    }
-  }
+
   .material-symbols-outlined {
     height: 4vh;
     width: 2vw;
     padding: 5px;
-    margin-top: -20%;
-    margin-right: 0;
+    position: relative;
+    left: 50%;
+    z-index: 3;
+    transform: translate(-50%,-50%);
     border: 2px solid black;
     border-radius : 3rem;
     background-color: $clr-white;
@@ -138,55 +37,74 @@ $clr-green: #33d692;
     box-shadow: 0 10px 3px rgba(0,0,0,0.2);
   }
 
-  .containerModelo{
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    img {
-      max-height: 23vh;
+  .tituloAlarma {
+    background-color: lightgrey;
+    font-weight: bold;
+    transform: translate(0,-125%);
+    font-size: 1.4rem;
+    padding-top: 5px;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+  }
+
+  .content {
+    max-height: 70vh;
+    .imagenVehiculo {
+      float:left;
+      max-height: 70vh;
+      max-width: 50vw;
     }
-    div {
+    .infoAlarma {
+      .infoVehiculo {
+        font-size: 1.4rem;
+        font-weight: bold;
+      }
+      h4 {
+        color: grey;
+        margin: 10px 0 5px 0;
+        font-size: 1rem;
+      }
+      .listaInfo {
+        margin: 5px;
+        list-style: none;
+        .description {
+          font-size: 0.8rem;
+          border-bottom: 1px solid lightgrey;
+        }
+        .item {
+          font-size: 0.85rem;
+          font-weight: bold;
+          border-bottom: 2px solid lightgrey;
+        }
+      }
+    }
+    .botonesModal {
       display: flex;
-      flex-direction: row;
-      div{
-        display: flex;
-        flex-direction: column;
-        margin: 0 5px;
-        label {
-          margin-top: 5px;
-          margin-bottom: 5px;
-          border: 1.5px solid black;
-          border-radius: 6px;
-          padding: 4px;
-        }
-        label:first-of-type{
-          font-weight: bold;
-          font-weight: bold;
-        }
+      justify-content: center;
+      button {
+        margin: 5px 5px 0 5px;
+        padding: 5px 5px;
+        width: 8vw;
+        color: $clr-white;
+        border: 0;
+        outline: none;
+        border-radius: 8px;
+        cursor: pointer;
+        box-shadow: 0 5px 3px rgba(0, 0, 0, 0.2);
+      }
+      .resueltaEstado {
+        background-color: $clr-green;
+      }
+      .changeEstado {
+        background-color: red;
+      }
+      .cerrarModal {
+        background-color: $clr-bluish-2;
       }
     }
   }
 
-  button {
-    width: 100%;
-    margin-top: 15px;
-    padding: 5px 0;
-    background: $clr-green;
-    color: $clr-white;
-    border: 0;
-    outline: none;
-    border-radius: 8px;
-    cursor: pointer;
-    box-shadow: 0 5px 3px rgba(0, 0, 0, 0.2);
-  }
-  .changeEstado {
-    background-color: $clr-bluish;
-  }
-}
 
-.popup p {
-  margin-top: 10px;
-  font-size: 0.8rem;
 }
 
 .containerList {
@@ -242,12 +160,12 @@ $clr-green: #33d692;
       background-color: white;
       border-radius: 20px;
       height: 100%;
-      width: 17vw;
+      width: 10vw;
     }
     .card p {
       text-align: start;
       padding-left: 9px;
-      font-size: 0.65rem;
+      font-size: 0.55rem;
       font-weight: bold;
       margin: 0;
     }

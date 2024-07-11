@@ -3,44 +3,11 @@ import React, { useEffect } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTriangleExclamation, faCircle, faCircleInfo } from '@fortawesome/free-solid-svg-icons'
 import logo from '../assets/svg/tiny-Codelco_logo.svg'
-import axios from 'axios'
+import * as servicesAlarmas from '../services/services_alarma.js'
 import cat793iv from '../assets/Image/cat793iv.jpg'
-import cat797f from '../assets/Image/cat797f.png'
+import cat797f from '../assets/Image/cat797f.jpg'
 import cat798ac from '../assets/Image/cat798ac.jpg'
-import kom930e from '../assets/Image/kom930e.png'
-
-
-const DialogAlerta = ({ setDialogUseState }, data) => {
-  return (
-    <div className="dialogPopup">
-      <img srcSet={logo} className="material-symbols-outlined"></img>
-      <div className="content">
-        <label>Aqui va el texto :D</label>
-        <p>Inserte más texto</p>
-        <label>Aqui va el texto :D</label>
-        <p>Inserte más texto</p>
-        <label>Aqui va el texto :D</label>
-        <p>Inserte más texto</p>
-        <label>Aqui va el texto :D</label>
-        <p>Inserte más texto</p>
-        <button type="button" onClick={() => setDialogUseState(false)}>
-          OK
-        </button>
-      </div>
-    </div>
-  )
-}
-
-const AlarmaGoogleMap = ({ setGoogleMapUseState }, data) => {
-  return (
-    <div className="mapModal">
-      <img srcSet={logo} className="material-symbols-outlined"></img>
-      <button type="button" onClick={() => setGoogleMapUseState(false)}>
-        OK
-      </button>
-    </div>
-  )
-}
+import kom930e from '../assets/Image/kom930e.jpg'
 
 const flotas = [
   {
@@ -65,70 +32,65 @@ const flotas = [
   }
 ]
 
-const ModalLista = ({ setModalUseState, data }) => {
-  const [tempData, setTempData] = React.useState("")
+const ModalLista = ({ setModalUseState, data, setDatos }) => {
   return (
     <div className="modalPopup">
       <img srcSet={logo} className="material-symbols-outlined"></img>
+      <header className="tituloAlarma">Detalles de la Alarma</header>
       <div className="content">
-        <div className="blockLine">
-          <div>
-            <label>Fecha</label>
-            <label>{data.fecha}</label>
-          </div>
-          <div>
-            <label>Estado</label>
-            <label>{tempData ? tempData : data.estado}</label>
-          </div>
-          <div>
-            <label>Localización</label>
-            <label>{data.localizacion}</label>
-          </div>
-          <div>
-            <label>Este</label>
-            <label>{data.este}</label>
-          </div>
-          <div>
-            <label>Norte</label>
-            <label>{data.norte}</label>
-          </div>
-          <div>
-            <label>Cota</label>
-            <label>{data.cota}</label>
-          </div>
-          <div>
-            <label>Razón</label>
-            <label>{data.razon}</label>
-          </div>
-          <div>
-            <label>Comentario</label>
-            <label>{data.comment === '' ? 'No hay Comentario' : data.comment}</label>
-          </div>
+        <img
+          className="imagenVehiculo"
+          src={flotas.filter((obj) => obj.flota === data.flota).at(0).src}
+        />
+        <div className="infoAlarma">
+          <header className="infoVehiculo">
+            {data.grupo} {data.flota} {data.caex}
+          </header>
+          <h4>Detalles de la Alerta {data.id}</h4>
+          <ul className="listaInfo">
+            <li className="item">Fecha</li>
+            <li className="description">{data.fecha}</li>
+            <li className="item">Estado</li>
+            <li className="description">{data.estado}</li>
+            <li className="item">Localizacion</li>
+            <li className="description">{data.localizacion}</li>
+            <li className="item">Este</li>
+            <li className="description">{data.este}</li>
+            <li className="item">Norte</li>
+            <li className="description">{data.norte}</li>
+            <li className="item">Cota</li>
+            <li className="description">{data.cota}</li>
+            <li className="item">Razón</li>
+            <li className="description">{data.razon}</li>
+            <li className="item">Comentario</li>
+            <li className="description">{data.comment ? data.comment : 'No hay comentario'}</li>
+          </ul>
+        </div>
+        <div className="botonesModal">
+          <button
+            type="button"
+            className={data.estado !== 'Resuelta' ? 'resueltaEstado' : 'changeEstado'}
+            onClick={
+              data.estado !== 'Resuelta'
+                ? async () => {
+                    await servicesAlarmas.putResolve(data.id)
+                    setDatos(await servicesAlarmas.fetchData())
+                    setModalUseState(false)
+                  }
+                : async () => {
+                    await servicesAlarmas.putReopen(data.id)
+                    setDatos(await servicesAlarmas.fetchData())
+                    setModalUseState(false)
+                  }
+            }
+          >
+            {data.estado !== 'Resuelta' ? 'Resolver' : 'Reabrir'}
+          </button>
+          <button type="button" className="cerrarModal" onClick={() => setModalUseState(false)}>
+            OK
+          </button>
         </div>
       </div>
-      <div className="containerModelo">
-        <img src={flotas.filter((obj) => obj.flota === data.flota).at(0).src}></img>
-        <div>
-          <div>
-            <label>Grupo</label>
-            <label>{data.grupo}</label>
-          </div>
-          <div>
-            <label>Flota</label>
-            <label>{data.flota}</label>
-          </div>
-          <div>
-            <label>Caex</label>
-            <label>{data.caex}</label>
-          </div>
-        </div>
-      </div>
-      <button type="button" className="changeEstado" onClick={() =>setTempData("Resuelto")}>
-        Resuelto
-      </button>
-      <button type="button" onClick={() => setModalUseState(false)}>
-        OK
-      </button>
     </div>
   )
 }
@@ -139,8 +101,6 @@ export const AlarmaLista = () => {
   const [index, setIndex] = React.useState(0)
   const [dataAlarma, setDataAlarma] = React.useState([])
   const [modalActivate, setActivateModal] = React.useState(false)
-  const [dialogActivate, setDialogActivate] = React.useState(false)
-  const [googleMapActivate, setGoogleMapActivate] = React.useState(false)
   const [dataToShow, setDataToShow] = React.useState({})
   const [totalData, setTotalData] = React.useState({})
 
@@ -150,15 +110,8 @@ export const AlarmaLista = () => {
     setDataAlarma(totalData.slice(start, end))
     return
   }
-  const fetchData = async () => {
-    try {
-      const response = await axios.get('http://localhost:3005/api/alerts/getAlerts')
-      setTotalData([...response.data.data])
-    } catch (error) {
-      console.error('Error obteniendo datos:', error)
-    }
-  }
   const jsonToData = async () => {
+    console.log(totalData)
     setIndex(parseInt(totalData.length / LIMIT) + 1)
     if (totalData.length < LIMIT) {
       setDataAlarma()
@@ -167,17 +120,20 @@ export const AlarmaLista = () => {
     }
   }
   useEffect(() => {
-    fetchData()
-    jsonToData()
-    setLoading(false)
+    const fetch = async () => {
+      setTotalData(await servicesAlarmas.fetchData())
+      jsonToData()
+      setLoading(false)
+    }
+    fetch()
   }, [totalData.length > 0])
   if (isLoading) console.log('loading!')
   return (
     <>
       <div className="bgList grayScale"></div>
-      {modalActivate && <ModalLista setModalUseState={setActivateModal} data={dataToShow} />}
-      {dialogActivate && <DialogAlerta setDialogUseState={setDialogActivate} />}
-      {googleMapActivate && <AlarmaGoogleMap setGoogleMapUseState={setGoogleMapActivate} />}
+      {modalActivate && (
+        <ModalLista setModalUseState={setActivateModal} data={dataToShow} setDatos={setTotalData} />
+      )}
       <div className={modalActivate ? 'containerList blur' : 'containerList'}>
         <div className="block">
           <div className="kpi">
@@ -187,11 +143,35 @@ export const AlarmaLista = () => {
             </div>
             <div className="card">
               <p>Alarmas en Reserva</p>
-              <strong>{dataAlarma.filter((alarma) => alarma.estado === 'Reserva').length}</strong>
+              <strong>
+                {Array.isArray(totalData)
+                  ? totalData.filter((alarma) => alarma.estado === 'Reserva').length
+                  : 0}
+              </strong>
             </div>
             <div className="card">
               <p>Alarmas en Demora</p>
-              <strong>{dataAlarma.filter((alarma) => alarma.estado === 'Demora').length}</strong>
+              <strong>
+                {Array.isArray(totalData)
+                  ? totalData.filter((alarma) => alarma.estado === 'Demora').length
+                  : 0}
+              </strong>
+            </div>
+            <div className="card">
+              <p>Alarmas Resueltas</p>
+              <strong>
+                {Array.isArray(totalData)
+                  ? totalData.filter((alarma) => alarma.estado === 'Resuelta').length
+                  : 0}
+              </strong>
+            </div>
+            <div className="card">
+              <p>Alarmas Reabiertas</p>
+              <strong>
+                {Array.isArray(totalData)
+                  ? totalData.filter((alarma) => alarma.estado === 'Reabierta').length
+                  : 0}
+              </strong>
             </div>
           </div>
           <table className="tableAlarma">
@@ -218,7 +198,15 @@ export const AlarmaLista = () => {
                       <td>
                         <FontAwesomeIcon
                           icon={data.estado === 'Demora' ? faTriangleExclamation : faCircle}
-                          color={data.estado === 'Demora' ? 'red' : 'orange'}
+                          color={
+                            data.estado === 'Demora'
+                              ? 'red'
+                              : data.estado === 'Reserva'
+                                ? 'orange'
+                                : data.estado === 'Reabierta'
+                                  ? 'blue'
+                                  : 'green'
+                          }
                         />
                       </td>
                       <td>{data.razon}</td>
