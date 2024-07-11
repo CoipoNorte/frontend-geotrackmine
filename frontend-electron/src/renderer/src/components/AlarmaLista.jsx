@@ -1,7 +1,12 @@
 /* eslint-disable react/prop-types */
 import React, { useEffect } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faTriangleExclamation, faCircle, faCircleInfo } from '@fortawesome/free-solid-svg-icons'
+import {
+  faTriangleExclamation,
+  faCircle,
+  faCircleInfo,
+  faSignOut
+} from '@fortawesome/free-solid-svg-icons'
 import logo from '../assets/svg/tiny-Codelco_logo.svg'
 import * as servicesAlarmas from '../services/services_alarma.js'
 import cat793iv from '../assets/Image/cat793iv.jpg'
@@ -32,7 +37,7 @@ const flotas = [
   }
 ]
 
-const ModalLista = ({ setModalUseState, data, setDatos }) => {
+const ModalLista = ({ setModalUseState, data, setTotal, update }) => {
   return (
     <div className="modalPopup">
       <img srcSet={logo} className="material-symbols-outlined"></img>
@@ -74,13 +79,15 @@ const ModalLista = ({ setModalUseState, data, setDatos }) => {
               data.estado !== 'Resuelta'
                 ? async () => {
                     await servicesAlarmas.putResolve(data.id)
-                    setDatos(await servicesAlarmas.fetchData())
+                    setTotal(await servicesAlarmas.fetchData())
                     setModalUseState(false)
+                    update(1)
                   }
                 : async () => {
                     await servicesAlarmas.putReopen(data.id)
-                    setDatos(await servicesAlarmas.fetchData())
+                    setTotal(await servicesAlarmas.fetchData())
                     setModalUseState(false)
+                    update(1)
                   }
             }
           >
@@ -106,12 +113,12 @@ export const AlarmaLista = () => {
 
   const changeIndex = (idx) => {
     const start = 20 * (idx - 1)
-    const end = 20 * idx
+    const end = 20 * idx - 1
     setDataAlarma(totalData.slice(start, end))
     return
   }
+
   const jsonToData = async () => {
-    console.log(totalData)
     setIndex(parseInt(totalData.length / LIMIT) + 1)
     if (totalData.length < LIMIT) {
       setDataAlarma()
@@ -119,6 +126,11 @@ export const AlarmaLista = () => {
       setDataAlarma(totalData.slice(0, 19))
     }
   }
+
+  const returnLogin = () => {
+    window.location.href = location.href.replace('#/alarma-lista', '')
+  }
+
   useEffect(() => {
     const fetch = async () => {
       setTotalData(await servicesAlarmas.fetchData())
@@ -127,12 +139,21 @@ export const AlarmaLista = () => {
     }
     fetch()
   }, [totalData.length > 0])
+
   if (isLoading) console.log('loading!')
   return (
     <>
       <div className="bgList grayScale"></div>
+      <button onClick={returnLogin} className="logout">
+        <FontAwesomeIcon icon={faSignOut} color="orange" />
+      </button>
       {modalActivate && (
-        <ModalLista setModalUseState={setActivateModal} data={dataToShow} setDatos={setTotalData} />
+        <ModalLista
+          setModalUseState={setActivateModal}
+          data={dataToShow}
+          setTotal={setTotalData}
+          update={changeIndex}
+        />
       )}
       <div className={modalActivate ? 'containerList blur' : 'containerList'}>
         <div className="block">
